@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Did Lula lose more votes in the states most exposed to the new US tariff?</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #ECE2DA;
+      color: #2B2420;
+      font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      margin: 0;
+    }
+    .pagina { max-width: 900px; margin: 0 auto; padding: 28px 16px 48px; }
+    .kicker {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+      color: #6B5D4F; margin: 0 0 6px;
+    }
+    h1 { font-size: 30px; line-height: 1.2; font-weight: 700; margin: 0 0 12px; }
+    .subtitulo { font-size: 16px; line-height: 1.5; margin: 0 0 18px; }
+    .caja {
+      background: #DFD2C3; border-radius: 8px;
+      padding: 14px 18px; margin: 0 0 16px;
+      font-size: 14px; line-height: 1.5;
+    }
+    .caja-titulo { font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+    .caja ul { margin: 0; padding-left: 18px; }
+    .caja li { margin-bottom: 6px; }
+    .como-leer { font-size: 14px; line-height: 1.5; margin: 0 0 14px; }
+    .leyenda { display: flex; flex-wrap: wrap; gap: 36px; font-size: 13px; margin-bottom: 4px; }
+    .titulo-leyenda { font-weight: 700; margin-bottom: 6px; }
+    .item { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .punto { width: 14px; height: 14px; border-radius: 50%; flex: none; opacity: 0.85; }
+    .nota, .fuentes { font-size: 12px; line-height: 1.55; color: #6B5D4F; margin: 10px 0 0; }
+    .tooltip {
+      position: absolute; background: white; border: 1px solid #999;
+      border-radius: 6px; padding: 8px 10px; font-size: 12px; line-height: 1.45;
+      pointer-events: none; opacity: 0; max-width: 270px;
+    }
+    .muted { color: #6B5D4F; }
+  </style>
+</head>
+<body>
+  <div class="pagina">
+
+    <p class="kicker">BRAZIL · US TARIFFS · 2026 ELECTION</p>
+    <h1>Did Lula lose more votes in the Brazilian states most exposed to the new US tariff?</h1>
+    <p class="subtitulo">
+      A look at Brazil's 27 states: how much of what each one sells to the United States pays a new tariff,
+      and how Lula's share of the vote changed between the 2022 and 2026 elections.
+    </p>
+
+    <div class="caja">
+      <div class="caja-titulo">What is this about?</div>
+      <ul>
+        <li><strong>The tariff.</strong> In July 2026, the United States began charging an extra 25% tax
+          (a "tariff") on many goods imported from Brazil.</li>
+        <li><strong>Who pays.</strong> Not everything is taxed. Coffee, beef, orange juice, oil and civil
+          aircraft are exempt, and steel and aluminum pay a separate, older tariff. So the new tariff hits
+          some Brazilian states much harder than others.</li>
+        <li><strong>The question.</strong> Brazil held the first round of its presidential election on
+          October 4, 2026. Did President Lula lose more votes, compared with 2022, in the states most
+          exposed to the new tariff?</li>
+      </ul>
+    </div>
+
+    <div class="leyenda">
+      <div>
+        <div class="titulo-leyenda">Color: region of Brazil</div>
+        <div id="leyenda-region"></div>
+      </div>
+      <div>
+        <div class="titulo-leyenda">Size: total exports to the US in 2025</div>
+        <div id="leyenda-tamano"></div>
+      </div>
+    </div>
+
+    <div id="grafico"></div>
+
+    <div class="caja">
+      <div class="caja-titulo">What the chart shows</div>
+      <ul>
+        <li id="r1"></li>
+        <li>There is no clear link between how exposed a state is to the tariff and how its vote changed.</li>
+        <li id="r3"></li>
+      </ul>
+    </div>
+
+    <p class="nota">
+      Hover over a circle to see the state's data. Labels are shown only for the biggest exporters.
+      States that export very little to the US can show extreme percentages, which is why circle size matters.
+    </p>
+    <p class="fuentes">
+      <strong>How we measured exposure:</strong> we took each state's 2025 exports to the US and removed the
+      products the US government exempted from the new tariff (such as coffee, beef, orange juice, oil,
+      civil aircraft and pig iron) and the products that already pay a separate US tariff on steel, aluminum,
+      copper, cars and pine lumber. What remains is the share that pays the new 25% tariff. The classification
+      is approximate and was done by product code. The change in vote compares Lula's share of valid votes in
+      the first round of 2022 and 2026. With 27 states and a single election, this chart cannot separate the
+      tariff's effect from other factors, such as regional differences.<br>
+      <strong>Sources:</strong> Comex Stat (Brazil's Ministry of Development), 2025 exports; US Trade
+      Representative, Notice of Action of July 15, 2026; TSE (Brazil's electoral court), official first-round
+      results for 2022 and 2026. Analysis: Manuel Bahillo.
+    </p>
+
+  </div>
+
+  <script>
+    const REGION_EN = {
+      "Norte": "North", "Nordeste": "Northeast", "Centro-Oeste": "Center-West",
+      "Sudeste": "Southeast", "Sur": "South"
+    };
+    const SECTOR_EN = {
+      "Azucares": "Sugar",
+      "Calzado": "Footwear",
+      "Capitulo 47": "Dissolving wood pulp",
+      "Grasas y aceites animales": "Animal fats (tallow)",
+      "Madera y manufacturas": "Wood products",
+      "Maquinaria y partes mecanicas": "Machinery",
+      "Maquinas y material electrico": "Electrical equipment",
+      "Materias proteicas y gelatinas": "Gelatin and protein products",
+      "Piedra y manufacturas": "Stone (granite, marble)",
+      "Preparaciones alimenticias": "Prepared foods",
+      "Productos de origen animal": "Animal products",
+      "Quimica organica": "Organic chemicals",
+      "Vehiculos": "Vehicles"
+    };
+
+    d3.csv("brasil_swing_vs_exposicion_2026.csv").then(function(data) {
+
+      data.forEach(function(d) {
+        d.pct_gravado = +d.pct_gravado;
+        d.swing_lula_pp = +d.swing_lula_pp;
+        d.total_usd = +d.total_usd;
+        d.lula_2022 = +d.lula_2022;
+        d.lula_2026 = +d.lula_2026;
+        d.regionEn = REGION_EN[d.region] || d.region;
+        d.sectorEn = SECTOR_EN[d.sector_dominante] || d.sector_dominante;
+      });
+
+      data.sort((a, b) => d3.descending(a.total_usd, b.total_usd));
+
+      const f1 = d3.format(".1f");
+      const fs = d3.format("+.1f");
+      const money = n => d3.format(",.0f")(n);
+
+      // Textos que se calculan solos a partir de los datos
+      const perdieron = data.filter(d => d.swing_lula_pp < 0).length;
+      const mediaRegion = d3.rollup(data, v => d3.mean(v, d => d.swing_lula_pp), d => d.regionEn);
+      const sur = mediaRegion.get("South");
+      const otros = Array.from(mediaRegion.entries()).filter(e => e[0] !== "South").map(e => e[1]);
+
+      d3.select("#r1").text(
+        `Lula's share of the vote fell in ${perdieron} of ${data.length} states, including many that are barely exposed to the tariff.`
+      );
+      d3.select("#r3").text(
+        `Among the biggest exporters, the three most exposed states (Santa Catarina, Rio Grande do Sul and Paraná) are all in the South, where Lula's vote fell the most: ${fs(sur)} points on average, versus ${fs(d3.max(otros))} to ${fs(d3.min(otros))} in the other regions. But the South already leaned right in 2022, so this drop cannot be attributed to the tariff.`
+      );
+
+      const UMBRAL_ETIQUETA = 250e6;
+
+      const W = 900, H = 540;
+      const margin = { top: 20, right: 30, bottom: 62, left: 75 };
+      const width = W - margin.left - margin.right;
+      const height = H - margin.top - margin.bottom;
+
+      const svg = d3.select("#grafico")
+        .append("svg")
+          .attr("viewBox", `0 0 ${W} ${H}`)
+          .attr("width", "100%")
+        .append("g")
+          .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      const yMin = Math.min(Math.floor(d3.min(data, d => d.swing_lula_pp)) - 1, -1);
+      const yMax = Math.max(Math.ceil(d3.max(data, d => d.swing_lula_pp)) + 1, 1);
+
+      const x = d3.scaleLinear().domain([0, 100]).range([0, width]);
+      const y = d3.scaleLinear().domain([yMin, yMax]).range([height, 0]);
+
+      const size = d3.scaleSqrt()
+        .domain([0, d3.max(data, d => d.total_usd)])
+        .range([3, 35]);
+
+      const color = d3.scaleOrdinal()
+        .domain(["North", "Northeast", "Center-West", "Southeast", "South"])
+        .range(["#3E8E5A", "#E39B2D", "#8E6BBF", "#2E5FA3", "#C0392B"]);
+
+      // Ejes con líneas de guía suaves
+      svg.append("g")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x).tickSize(-height).tickFormat(d => d + "%"));
+
+      svg.append("g")
+        .call(d3.axisLeft(y).tickSize(-width).tickFormat(d => d > 0 ? "+" + d : d));
+
+      svg.selectAll(".tick line").attr("stroke", "#D3C6B9");
+      svg.selectAll(".domain").remove();
+      svg.selectAll(".tick text").attr("font-size", 12).attr("fill", "#2B2420");
+
+      // Títulos de los ejes
+      svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", height + 48)
+        .attr("text-anchor", "middle")
+        .attr("font-size", 13)
+        .text("Share of a state's exports to the US that pay the new 25% tariff");
+
+      svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -height / 2)
+        .attr("y", -55)
+        .attr("text-anchor", "middle")
+        .attr("font-size", 13)
+        .text("Change in Lula's share of the vote, 2022 to 2026 (points)");
+
+      // Línea de "sin cambio" y notas sobre el eje vertical
+      svg.append("line")
+        .attr("x1", 0).attr("x2", width)
+        .attr("y1", y(0)).attr("y2", y(0))
+        .attr("stroke", "#6B5D4F")
+        .attr("stroke-dasharray", "4,3");
+
+      svg.append("text")
+        .attr("x", width).attr("y", y(0) - 5)
+        .attr("text-anchor", "end")
+        .attr("font-size", 11).attr("fill", "#6B5D4F")
+        .text("No change");
+
+      svg.append("text")
+        .attr("x", width).attr("y", y(yMax - 0.6))
+        .attr("text-anchor", "end")
+        .attr("font-size", 12).attr("font-style", "italic").attr("fill", "#6B5D4F")
+        .text("Lula's share grew ↑");
+
+      svg.append("text")
+        .attr("x", width).attr("y", y(yMin + 0.5))
+        .attr("text-anchor", "end")
+        .attr("font-size", 12).attr("font-style", "italic").attr("fill", "#6B5D4F")
+        .text("Lula's share shrank ↓");
+
+      // Cuadro de información
+      const tooltip = d3.select("body")
+        .append("div")
+          .attr("class", "tooltip");
+
+      // Círculos
+      svg.selectAll("circle")
+        .data(data)
+        .join("circle")
+          .attr("cx", d => x(d.pct_gravado))
+          .attr("cy", d => y(d.swing_lula_pp))
+          .attr("r", d => size(d.total_usd))
+          .attr("fill", d => color(d.regionEn))
+          .attr("stroke", "white")
+          .attr("stroke-width", 1)
+          .attr("opacity", 0.8)
+          .on("mouseover", function(event, d) {
+            tooltip
+              .style("opacity", 1)
+              .html(`<strong>${d.Estado}</strong> <span class="muted">(${d.regionEn})</span><br>
+                     Exports to the US hit by the new tariff: <strong>${f1(d.pct_gravado)}%</strong><br>
+                     Main product group hit: ${d.sectorEn}<br>
+                     Lula's vote: ${f1(d.lula_2022)}% in 2022 → ${f1(d.lula_2026)}% in 2026 (${fs(d.swing_lula_pp)} points)<br>
+                     Total exports to the US: $${money(d.total_usd / 1e6)} million
+                     ${d.total_usd < 100e6 ? "<br><em>Small exporter: the percentage can be misleading.</em>" : ""}`);
+            d3.select(this).attr("stroke", "black").attr("stroke-width", 2);
+          })
+          .on("mousemove", function(event) {
+            tooltip
+              .style("left", (event.pageX + 12) + "px")
+              .style("top", (event.pageY - 20) + "px");
+          })
+          .on("mouseout", function() {
+            tooltip.style("opacity", 0);
+            d3.select(this).attr("stroke", "white").attr("stroke-width", 1);
+          });
+
+      // Siglas, solo para los estados que más exportan
+      svg.selectAll(".etiqueta")
+        .data(data.filter(d => d.total_usd >= UMBRAL_ETIQUETA))
+        .join("text")
+          .attr("class", "etiqueta")
+          .attr("x", d => x(d.pct_gravado) + size(d.total_usd) + 3)
+          .attr("y", d => y(d.swing_lula_pp) + 4)
+          .text(d => d.UF)
+          .attr("font-size", 11)
+          .attr("fill", "#2B2420")
+          .attr("pointer-events", "none");
+
+      // Leyenda de regiones
+      color.domain().forEach(function(r) {
+        const fila = d3.select("#leyenda-region").append("div").attr("class", "item");
+        fila.append("span").attr("class", "punto").style("background", color(r));
+        fila.append("span").text(r);
+      });
+
+      // Leyenda de tamaño
+      const leyTam = d3.select("#leyenda-tamano")
+        .append("svg")
+          .attr("width", 300)
+          .attr("height", 92);
+
+      const valores = [1e9, 5e9, 10e9].filter(v => v <= d3.max(data, d => d.total_usd));
+      const centros = [40, 130, 235];
+
+      valores.forEach(function(v, i) {
+        const r = size(v);
+        leyTam.append("circle")
+          .attr("cx", centros[i]).attr("cy", 70 - r).attr("r", r)
+          .attr("fill", "#8A8A8A").attr("opacity", 0.5)
+          .attr("stroke", "white");
+        leyTam.append("text")
+          .attr("x", centros[i]).attr("y", 87)
+          .attr("text-anchor", "middle")
+          .attr("font-size", 12)
+          .text("$" + (v / 1e9) + " billion");
+      });
+
+    });
+  </script>
+</body>
+</html>

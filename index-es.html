@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>¿Perdió Lula más votos en los estados más expuestos al nuevo arancel de EE. UU.?</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #ECE2DA;
+      color: #2B2420;
+      font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      margin: 0;
+    }
+    .pagina { max-width: 900px; margin: 0 auto; padding: 28px 16px 48px; }
+    .kicker {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+      color: #6B5D4F; margin: 0 0 6px;
+    }
+    h1 { font-size: 30px; line-height: 1.2; font-weight: 700; margin: 0 0 12px; }
+    .subtitulo { font-size: 16px; line-height: 1.5; margin: 0 0 18px; }
+    .caja {
+      background: #DFD2C3; border-radius: 8px;
+      padding: 14px 18px; margin: 0 0 16px;
+      font-size: 14px; line-height: 1.5;
+    }
+    .caja-titulo { font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+    .caja ul { margin: 0; padding-left: 18px; }
+    .caja li { margin-bottom: 6px; }
+    .como-leer { font-size: 14px; line-height: 1.5; margin: 0 0 14px; }
+    .leyenda { display: flex; flex-wrap: wrap; gap: 36px; font-size: 13px; margin-bottom: 4px; }
+    .titulo-leyenda { font-weight: 700; margin-bottom: 6px; }
+    .item { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .punto { width: 14px; height: 14px; border-radius: 50%; flex: none; opacity: 0.85; }
+    .nota, .fuentes { font-size: 12px; line-height: 1.55; color: #6B5D4F; margin: 10px 0 0; }
+    .tooltip {
+      position: absolute; background: white; border: 1px solid #999;
+      border-radius: 6px; padding: 8px 10px; font-size: 12px; line-height: 1.45;
+      pointer-events: none; opacity: 0; max-width: 270px;
+    }
+    .muted { color: #6B5D4F; }
+  </style>
+</head>
+<body>
+  <div class="pagina">
+
+    <p style="font-size:13px;text-align:right;margin:0 0 8px;"><a href="index.html" style="color:#6B5D4F;">English version</a></p>
+
+    <p class="kicker">BRASIL · ARANCELES DE EE. UU. · ELECCIÓN 2026</p>
+    <h1>¿Perdió Lula más votos en los estados brasileños más expuestos al nuevo arancel de EE. UU.?</h1>
+    <p class="subtitulo">
+      Un vistazo a los 27 estados de Brasil: qué parte de lo que cada uno vende a Estados Unidos paga un
+      nuevo arancel, y cómo cambió el porcentaje de votos de Lula entre las elecciones de 2022 y 2026.
+    </p>
+
+    <div class="caja">
+      <div class="caja-titulo">¿De qué se trata?</div>
+      <ul>
+        <li><strong>El arancel.</strong> En julio de 2026, Estados Unidos empezó a cobrar un impuesto adicional
+          del 25% (un «arancel») a muchos productos importados de Brasil.</li>
+        <li><strong>Quién paga.</strong> No todo paga. El café, la carne vacuna, el jugo de naranja, el petróleo
+          y los aviones civiles están exentos, y el acero y el aluminio pagan otro arancel distinto, más antiguo.
+          Por eso el nuevo arancel golpea mucho más a algunos estados brasileños que a otros.</li>
+        <li><strong>La pregunta.</strong> Brasil celebró la primera vuelta de su elección presidencial el 4 de
+          octubre de 2026. ¿Perdió el presidente Lula más votos, en comparación con 2022, en los estados más
+          expuestos al nuevo arancel?</li>
+      </ul>
+    </div>
+
+    <p class="como-leer">
+      <strong>Cómo leer el gráfico:</strong> cada círculo es un estado. Cuanto más a la derecha está, mayor es
+      la parte de sus exportaciones a EE. UU. que paga el nuevo arancel. Cuanto más arriba, más creció el
+      porcentaje de votos de Lula desde 2022; cuanto más abajo, más cayó (una baja de 40% a 36% son
+      &minus;4 puntos).
+    </p>
+
+    <div class="leyenda">
+      <div>
+        <div class="titulo-leyenda">Color: región de Brasil</div>
+        <div id="leyenda-region"></div>
+      </div>
+      <div>
+        <div class="titulo-leyenda">Tamaño: exportaciones totales a EE. UU. en 2025 (M = millones de dólares)</div>
+        <div id="leyenda-tamano"></div>
+      </div>
+    </div>
+
+    <div id="grafico"></div>
+
+    <div class="caja">
+      <div class="caja-titulo">Lo que muestra el gráfico</div>
+      <ul>
+        <li id="r1"></li>
+        <li>No hay un vínculo claro entre qué tan expuesto está un estado al arancel y cómo cambió su voto.</li>
+        <li id="r3"></li>
+      </ul>
+    </div>
+
+    <p class="nota">
+      Pasa el cursor sobre un círculo para ver los datos del estado. Solo se muestran las siglas de los mayores
+      exportadores. Los estados que exportan muy poco a EE. UU. pueden mostrar porcentajes extremos, por eso
+      el tamaño del círculo importa.
+    </p>
+    <p class="fuentes">
+      <strong>Cómo medimos la exposición:</strong> tomamos las exportaciones de cada estado a EE. UU. en 2025 y
+      quitamos los productos que el gobierno estadounidense eximió del nuevo arancel (como café, carne vacuna,
+      jugo de naranja, petróleo, aviones civiles y arrabio, es decir, hierro en bruto) y los que ya pagan un
+      arancel estadounidense aparte por acero, aluminio, cobre, autos y madera de pino. Lo que queda es la parte
+      que paga el nuevo arancel del 25%. La clasificación es aproximada y se hizo por código de producto. El
+      cambio en el voto compara el porcentaje de votos válidos de Lula en la primera vuelta de 2022 y de 2026.
+      Con 27 estados y una sola elección, este gráfico no puede separar el efecto del arancel de otros factores,
+      como las diferencias regionales.<br>
+      <strong>Fuentes:</strong> Comex Stat (Ministerio de Desarrollo de Brasil), exportaciones 2025; Oficina del
+      Representante Comercial de EE. UU. (USTR), Notice of Action del 15 de julio de 2026; TSE (Tribunal Superior
+      Electoral de Brasil), resultados oficiales de la primera vuelta de 2022 y 2026. Análisis: Manuel Bahillo.
+    </p>
+
+  </div>
+
+  <script>
+    const SECTOR_ES = {
+      "Azucares": "Azúcar",
+      "Calzado": "Calzado",
+      "Capitulo 47": "Pulpa de madera para disolver",
+      "Grasas y aceites animales": "Grasas animales (sebo)",
+      "Madera y manufacturas": "Productos de madera",
+      "Maquinaria y partes mecanicas": "Maquinaria",
+      "Maquinas y material electrico": "Equipos eléctricos",
+      "Materias proteicas y gelatinas": "Gelatinas y productos proteicos",
+      "Piedra y manufacturas": "Piedra (granito, mármol)",
+      "Preparaciones alimenticias": "Alimentos preparados",
+      "Productos de origen animal": "Productos de origen animal",
+      "Quimica organica": "Químicos orgánicos",
+      "Vehiculos": "Vehículos"
+    };
+
+    // Formato de números en español: punto para miles, coma para decimales
+    const es = d3.formatLocale({
+      decimal: ",", thousands: ".", grouping: [3], currency: ["US$ ", ""]
+    });
+
+    d3.csv("brasil_swing_vs_exposicion_2026.csv").then(function(data) {
+
+      data.forEach(function(d) {
+        d.pct_gravado = +d.pct_gravado;
+        d.swing_lula_pp = +d.swing_lula_pp;
+        d.total_usd = +d.total_usd;
+        d.lula_2022 = +d.lula_2022;
+        d.lula_2026 = +d.lula_2026;
+        d.sectorEs = SECTOR_ES[d.sector_dominante] || d.sector_dominante;
+      });
+
+      data.sort((a, b) => d3.descending(a.total_usd, b.total_usd));
+
+      const f1 = es.format(".1f");
+      const fs = es.format("+.1f");
+      const money = n => es.format(",.0f")(n);
+
+      // Textos que se calculan solos a partir de los datos
+      const perdieron = data.filter(d => d.swing_lula_pp < 0).length;
+      const mediaRegion = d3.rollup(data, v => d3.mean(v, d => d.swing_lula_pp), d => d.region);
+      const sur = mediaRegion.get("Sur");
+      const otros = Array.from(mediaRegion.entries()).filter(e => e[0] !== "Sur").map(e => e[1]);
+
+      d3.select("#r1").text(
+        `El porcentaje de votos de Lula cayó en ${perdieron} de ${data.length} estados, incluidos muchos que casi no están expuestos al arancel.`
+      );
+      d3.select("#r3").text(
+        `Entre los mayores exportadores, los tres estados más expuestos (Santa Catarina, Rio Grande do Sul y Paraná) están todos en el Sur, donde el voto a Lula cayó más: ${fs(sur)} puntos en promedio, frente a entre ${fs(d3.max(otros))} y ${fs(d3.min(otros))} en las demás regiones. Pero el Sur ya se inclinaba hacia la derecha en 2022, así que esa caída no puede atribuirse al arancel.`
+      );
+
+      const UMBRAL_ETIQUETA = 250e6;
+
+      const W = 900, H = 540;
+      const margin = { top: 20, right: 30, bottom: 62, left: 75 };
+      const width = W - margin.left - margin.right;
+      const height = H - margin.top - margin.bottom;
+
+      const svg = d3.select("#grafico")
+        .append("svg")
+          .attr("viewBox", `0 0 ${W} ${H}`)
+          .attr("width", "100%")
+        .append("g")
+          .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      const yMin = Math.min(Math.floor(d3.min(data, d => d.swing_lula_pp)) - 1, -1);
+      const yMax = Math.max(Math.ceil(d3.max(data, d => d.swing_lula_pp)) + 1, 1);
+
+      const x = d3.scaleLinear().domain([0, 100]).range([0, width]);
+      const y = d3.scaleLinear().domain([yMin, yMax]).range([height, 0]);
+
+      const size = d3.scaleSqrt()
+        .domain([0, d3.max(data, d => d.total_usd)])
+        .range([3, 35]);
+
+      const color = d3.scaleOrdinal()
+        .domain(["Norte", "Nordeste", "Centro-Oeste", "Sudeste", "Sur"])
+        .range(["#3E8E5A", "#E39B2D", "#8E6BBF", "#2E5FA3", "#C0392B"]);
+
+      // Ejes con líneas de guía suaves
+      svg.append("g")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x).tickSize(-height).tickFormat(d => d + "%"));
+
+      svg.append("g")
+        .call(d3.axisLeft(y).tickSize(-width).tickFormat(d => d === 0 ? "0" : es.format("+d")(d)));
+
+      svg.selectAll(".tick line").attr("stroke", "#D3C6B9");
+      svg.selectAll(".domain").remove();
+      svg.selectAll(".tick text").attr("font-size", 12).attr("fill", "#2B2420");
+
+      // Títulos de los ejes
+      svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", height + 48)
+        .attr("text-anchor", "middle")
+        .attr("font-size", 13)
+        .text("Parte de las exportaciones de cada estado a EE. UU. que paga el nuevo arancel del 25%");
+
+      svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -height / 2)
+        .attr("y", -55)
+        .attr("text-anchor", "middle")
+        .attr("font-size", 13)
+        .text("Cambio en el porcentaje de votos de Lula, 2022 a 2026 (puntos)");
+
+      // Línea de "sin cambio" y notas sobre el eje vertical
+      svg.append("line")
+        .attr("x1", 0).attr("x2", width)
+        .attr("y1", y(0)).attr("y2", y(0))
+        .attr("stroke", "#6B5D4F")
+        .attr("stroke-dasharray", "4,3");
+
+      svg.append("text")
+        .attr("x", width).attr("y", y(0) - 5)
+        .attr("text-anchor", "end")
+        .attr("font-size", 11).attr("fill", "#6B5D4F")
+        .text("Sin cambio");
+
+      svg.append("text")
+        .attr("x", width).attr("y", y(yMax - 0.6))
+        .attr("text-anchor", "end")
+        .attr("font-size", 12).attr("font-style", "italic").attr("fill", "#6B5D4F")
+        .text("El voto a Lula creció ↑");
+
+      svg.append("text")
+        .attr("x", width).attr("y", y(yMin + 0.5))
+        .attr("text-anchor", "end")
+        .attr("font-size", 12).attr("font-style", "italic").attr("fill", "#6B5D4F")
+        .text("El voto a Lula cayó ↓");
+
+      // Cuadro de información
+      const tooltip = d3.select("body")
+        .append("div")
+          .attr("class", "tooltip");
+
+      // Círculos
+      svg.selectAll("circle")
+        .data(data)
+        .join("circle")
+          .attr("cx", d => x(d.pct_gravado))
+          .attr("cy", d => y(d.swing_lula_pp))
+          .attr("r", d => size(d.total_usd))
+          .attr("fill", d => color(d.region))
+          .attr("stroke", "white")
+          .attr("stroke-width", 1)
+          .attr("opacity", 0.8)
+          .on("mouseover", function(event, d) {
+            tooltip
+              .style("opacity", 1)
+              .html(`<strong>${d.Estado}</strong> <span class="muted">(${d.region})</span><br>
+                     Exportaciones a EE. UU. afectadas por el nuevo arancel: <strong>${f1(d.pct_gravado)}%</strong><br>
+                     Principal grupo de productos afectado: ${d.sectorEs}<br>
+                     Voto a Lula: ${f1(d.lula_2022)}% en 2022 → ${f1(d.lula_2026)}% en 2026 (${fs(d.swing_lula_pp)} puntos)<br>
+                     Exportaciones totales a EE. UU.: US$ ${money(d.total_usd / 1e6)} millones
+                     ${d.total_usd < 100e6 ? "<br><em>Exportador pequeño: el porcentaje puede ser engañoso.</em>" : ""}`);
+            d3.select(this).attr("stroke", "black").attr("stroke-width", 2);
+          })
+          .on("mousemove", function(event) {
+            tooltip
+              .style("left", (event.pageX + 12) + "px")
+              .style("top", (event.pageY - 20) + "px");
+          })
+          .on("mouseout", function() {
+            tooltip.style("opacity", 0);
+            d3.select(this).attr("stroke", "white").attr("stroke-width", 1);
+          });
+
+      // Siglas, solo para los estados que más exportan
+      svg.selectAll(".etiqueta")
+        .data(data.filter(d => d.total_usd >= UMBRAL_ETIQUETA))
+        .join("text")
+          .attr("class", "etiqueta")
+          .attr("x", d => x(d.pct_gravado) + size(d.total_usd) + 3)
+          .attr("y", d => y(d.swing_lula_pp) + 4)
+          .text(d => d.UF)
+          .attr("font-size", 11)
+          .attr("fill", "#2B2420")
+          .attr("pointer-events", "none");
+
+      // Leyenda de regiones
+      color.domain().forEach(function(r) {
+        const fila = d3.select("#leyenda-region").append("div").attr("class", "item");
+        fila.append("span").attr("class", "punto").style("background", color(r));
+        fila.append("span").text(r);
+      });
+
+      // Leyenda de tamaño
+      const leyTam = d3.select("#leyenda-tamano")
+        .append("svg")
+          .attr("width", 300)
+          .attr("height", 92);
+
+      const valores = [1e9, 5e9, 10e9].filter(v => v <= d3.max(data, d => d.total_usd));
+      const centros = [40, 130, 235];
+
+      valores.forEach(function(v, i) {
+        const r = size(v);
+        leyTam.append("circle")
+          .attr("cx", centros[i]).attr("cy", 70 - r).attr("r", r)
+          .attr("fill", "#8A8A8A").attr("opacity", 0.5)
+          .attr("stroke", "white");
+        leyTam.append("text")
+          .attr("x", centros[i]).attr("y", 87)
+          .attr("text-anchor", "middle")
+          .attr("font-size", 12)
+          .text("US$ " + money(v / 1e6) + " M");
+      });
+
+    });
+  </script>
+</body>
+</html>

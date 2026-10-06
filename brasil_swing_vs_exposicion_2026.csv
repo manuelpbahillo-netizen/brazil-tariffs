@@ -1,0 +1,28 @@
+UF,Estado,region,lula_2022,lula_2026,swing_lula_pp,bolso_2022,flavio_2026,swing_flavio_pp,total_usd,exento_usd,gravado_julio_usd,dudoso_usd,pct_gravado,pct_gravado_min,sector_dominante,max_sector_share,tipo_exposicion
+AC,Acre,Norte,29.26,28.73,-0.53,62.5,64.56,2.06,1267694,1225938,3600,0,0.3,0.3,Madera y manufacturas,73.6,Concentrada
+AL,Alagoas,Nordeste,56.5,54.73,-1.77,36.05,40.45,4.4,67335401,1106641,66228684,0,98.4,98.4,Azucares,99.2,Concentrada
+AM,Amazonas,Norte,49.58,48.23,-1.35,42.8,45.0,2.2,74700857,15941181,52507158,40000,70.3,70.2,Vehiculos,41.0,Diversificada
+AP,Amapá,Norte,45.67,45.71,0.04,43.41,45.67,2.26,12542819,5945048,6597771,0,52.6,52.6,Preparaciones alimenticias,100.0,Concentrada
+BA,Bahia,Nordeste,69.73,66.17,-3.56,24.31,28.53,4.22,821407087,520867400,294503037,76909970,35.9,26.5,Capitulo 47,32.6,Diversificada
+CE,Ceará,Nordeste,65.91,63.29,-2.62,25.38,31.27,5.89,1050865048,166824956,81268801,0,7.7,7.7,Calzado,42.1,Diversificada
+DF,Distrito Federal,Centro-Oeste,36.85,38.11,1.26,51.65,51.31,-0.34,7942889,1667688,6272609,0,79.0,79.0,Grasas y aceites animales,57.4,Diversificada
+ES,Espírito Santo,Sudeste,40.4,37.76,-2.64,52.23,54.78,2.55,2836646143,1738291615,258196392,800000,9.1,9.1,Piedra y manufacturas,81.1,Concentrada
+GO,Goiás,Centro-Oeste,39.51,31.06,-8.45,52.16,53.6,1.44,641105974,501525775,138811428,831458,21.7,21.5,Azucares,52.1,Diversificada
+MA,Maranhão,Nordeste,68.84,63.99,-4.85,26.02,30.9,4.88,624260654,605043374,19217280,47668,3.1,3.1,Productos de origen animal,88.6,Concentrada
+MG,Minas Gerais,Sudeste,48.29,43.33,-4.96,43.6,48.24,4.64,4291695915,3330271498,658834200,51750714,15.4,14.1,Maquinas y material electrico,35.7,Diversificada
+MS,Mato Grosso do Sul,Centro-Oeste,39.04,34.68,-4.36,52.7,58.6,5.9,539459284,470067009,69383033,300,12.9,12.9,Grasas y aceites animales,93.6,Concentrada
+MT,Mato Grosso,Centro-Oeste,34.39,29.18,-5.21,59.84,65.15,5.31,274790454,215311369,59479085,6998,21.6,21.6,Grasas y aceites animales,59.1,Diversificada
+PA,Pará,Norte,52.22,49.91,-2.31,40.27,44.5,4.23,1038611415,920745548,66513970,0,6.4,6.4,Grasas y aceites animales,40.4,Diversificada
+PB,Paraíba,Nordeste,64.21,61.31,-2.9,29.62,33.07,3.45,28172124,16328969,11843155,0,42.0,42.0,Azucares,75.6,Concentrada
+PE,Pernambuco,Nordeste,65.27,63.45,-1.82,29.91,31.03,1.12,126183196,49710814,75678065,9438,60.0,60.0,Azucares,39.8,Diversificada
+PI,Piauí,Nordeste,74.25,70.99,-3.26,19.9,24.09,4.19,31659103,30420976,1238127,0,3.9,3.9,Quimica organica,95.0,Concentrada
+PR,Paraná,Sur,35.99,31.2,-4.79,55.26,59.91,4.65,1206626449,274102688,862375665,147001915,71.5,59.3,Madera y manufacturas,44.5,Diversificada
+RJ,Rio de Janeiro,Sudeste,40.68,39.41,-1.27,51.09,53.01,1.92,6592906586,4160881706,606004031,335441811,9.2,4.1,Maquinaria y partes mecanicas,56.1,Diversificada
+RN,Rio Grande do Norte,Nordeste,62.98,59.75,-3.23,31.02,34.77,3.75,91286080,53872718,37411500,0,41.0,41.0,Azucares,42.8,Diversificada
+RO,Rondônia,Norte,28.98,25.89,-3.09,64.36,67.45,3.09,135602090,131321431,4280563,0,3.2,3.2,Grasas y aceites animales,87.7,Concentrada
+RR,Roraima,Norte,23.05,22.86,-0.19,69.57,71.06,1.49,517817,205251,171516,0,33.1,33.1,Maquinaria y partes mecanicas,99.7,Concentrada
+RS,Rio Grande do Sul,Sur,42.28,35.73,-6.55,48.89,55.64,6.75,1646930392,246191222,1195463141,31673288,72.6,70.7,Maquinas y material electrico,18.8,Diversificada
+SC,Santa Catarina,Sur,29.54,25.04,-4.5,62.21,66.65,4.44,1470117781,60741211,1240072747,83922733,84.4,78.6,Madera y manufacturas,32.1,Diversificada
+SE,Sergipe,Nordeste,63.82,62.75,-1.07,29.16,30.63,1.47,155667835,152258370,3409465,0,2.2,2.2,Maquinas y material electrico,71.1,Concentrada
+SP,São Paulo,Sudeste,40.89,38.2,-2.69,47.71,51.93,4.22,13279372758,7143421000,5239847544,355125090,39.5,36.8,Maquinaria y partes mecanicas,41.3,Diversificada
+TO,Tocantins,Norte,50.4,43.42,-6.98,44.0,50.44,6.44,55069063,25835861,29178865,0,53.0,53.0,Materias proteicas y gelatinas,72.3,Concentrada
